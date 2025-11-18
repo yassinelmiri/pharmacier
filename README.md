@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <b>Backend : NestJS • Frontend : Next.js • Base de données : PostgreSQL • Déploiement : Proxmox + Docker</b>
+  <b>Backend : NestJS • Frontend : Next.js • Base de données : Prisma• Déploiement : Proxmox + Docker</b>
 </p>
 
 ---
@@ -287,7 +287,7 @@ Vous devez voir :
 
 * ✔ Backend : port 3001
 * ✔ Frontend : port 3000
-* ✔ PostgreSQL : port 5432
+* ✔ Prisma: port 5432
 
 ---
 
@@ -301,6 +301,7 @@ Votre infrastructure **Coursa** est maintenant entièrement opérationnelle :
 ✨ Déployés avec Docker
 ✨ Hébergés sur Proxmox
 ✨ Option SSL + Proxy disponible
+
 
 
 
