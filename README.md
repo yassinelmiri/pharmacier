@@ -54,6 +54,11 @@ Vous devez disposer de :
 
 # 📌 **Installation des outils**
 
+*Connecter *
+
+<img width="715" height="177" alt="image" src="https://github.com/user-attachments/assets/a87530fb-29f3-4e85-bf8b-88444bc6dfa1" />
+
+
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install git curl wget htop net-tools -y
@@ -296,5 +301,6 @@ Votre infrastructure **Coursa** est maintenant entièrement opérationnelle :
 ✨ Déployés avec Docker
 ✨ Hébergés sur Proxmox
 ✨ Option SSL + Proxy disponible
+
 
 
