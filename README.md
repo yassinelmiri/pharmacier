@@ -1,7 +1,7 @@
-# 🚀 **Déploiement du Projet Coursa – Infrastructure Proxmox + Docker**
+# 🚀 **Déploiement du Projet Coursa – Proxmox**
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/7e8faa90-f71a-4769-a166-38be1ddeafc5" width="420" />
+  <img width="1355" height="686" alt="image" src="https://github.com/user-attachments/assets/1b7fd177-2409-4314-8053-04425bc5678a" />
 </p>
 
 <p align="center">
@@ -291,3 +291,4 @@ Votre infrastructure **Coursa** est maintenant entièrement opérationnelle :
 ✨ Déployés avec Docker
 ✨ Hébergés sur Proxmox
 ✨ Option SSL + Proxy disponible
+
