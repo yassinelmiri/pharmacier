@@ -141,23 +141,75 @@ cd coursa_frontend_senegal
 ## 🔹 Backend NestJS
 
 ```Dockerfile
-FROM node:18-alpine
+FROM node:20
+
+
+RUN apt-get update && apt-get install -y wget postgresql-client \
+    && wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz \
+    && rm dockerize-linux-amd64-v0.6.1.tar.gz
+
+
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install --production
+
+RUN npm install -force
+
+RUN npm install -g prisma
+
+COPY prisma ./prisma
+
+RUN npx prisma generate
+
 COPY . .
-CMD ["npm", "run", "start:prod"]
+
+RUN npm run build
+
+EXPOSE 3000
+
+# CMD npx prisma migrate dev && npm run start:dev
+# CMD ["dockerize", "-wait", "tcp://postgres:5432", "-timeout", "60s", "sh", "-c", "npx prisma migrate dev && npx prisma db seed && npm run start:dev"]
+CMD ["dockerize", "-wait", "tcp://postgres:5432", "-timeout", "60s", "sh", "-c", "npx prisma migrate deploy && npm run build && npm run start"]
 ```
 
 ## 🔹 Frontend Next.js
 
 ```Dockerfile
-FROM node:18-alpine
+# Step 1: Build stage
+FROM node:18-alpine AS builder
+
 WORKDIR /app
+
+# Copy package info and install deps
 COPY package*.json ./
-RUN npm install
+RUN npm install --force
+
+# Copy the rest of the app
 COPY . .
+
+# Build the Next.js project
 RUN npm run build
+
+# Step 2: Production stage
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=5173
+
+# Copy only necessary files from builder
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
+
+# Expose the desired port
+EXPOSE 5173
+
+# Start the app
 CMD ["npm", "start"]
 ```
 
@@ -166,41 +218,23 @@ CMD ["npm", "start"]
 # 📌 **docker-compose.yml – Backend + Frontend + PostgreSQL**
 
 ```yaml
-version: "3.8"
-
 services:
-  backend:
-    build: ./coursa-backend
-    container_name: coursa_backend
-    ports:
-      - "3001:3001"
-    environment:
-      DATABASE_URL: postgres://postgres:admin@db:5432/coursa
-    depends_on:
-      - db
-    restart: always
-
   frontend:
-    build: ./coursa_frontend_senegal
-    container_name: coursa_frontend
+    build:
+      context: ./
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    restart: always
+      - "5173:5173"
+    container_name: frontend
+    networks:
+      - app-net
 
-  db:
-    image: postgres:15
-    container_name: coursa_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: coursa
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+networks:
+  app-net:
+    driver: bridge
 
 volumes:
-  pgdata:
+  postgres_data:
 ```
 
 ---
@@ -301,6 +335,7 @@ Votre infrastructure **Coursa** est maintenant entièrement opérationnelle :
 ✨ Déployés avec Docker
 ✨ Hébergés sur Proxmox
 ✨ Option SSL + Proxy disponible
+
 
 
 
